@@ -9,17 +9,19 @@ import {
   IconButton,
   Button,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import AlertNotification from "../components/util/AlertNotification";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoginState } from "../redux/authSlice"; // import the action
+import { setLoginState } from "../redux/slices/authSlice"; // import the action
 import { useNavigate } from "react-router-dom";
 const LoginPage = () => {
   const goTo = useNavigate();
   const apiUrl = useSelector((state) => state.auth.apiUrl);
+  const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -43,8 +45,6 @@ const LoginPage = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
-    console.log(loginData);
-
     if (loginData.username === "" || loginData.password === "") {
       setSnackbar({
         open: true,
@@ -62,7 +62,6 @@ const LoginPage = () => {
 
       if (res.data?.status === "success") {
         const token = res.data.token;
-        console.log(res.data);
 
         dispatch(setLoginState({ isLoggedIn: true }));
         localStorage.setItem("token", token);
@@ -96,6 +95,9 @@ const LoginPage = () => {
           flexDirection: "column",
           gap: 2,
           width: "20rem",
+          bgcolor: "white",
+          padding: "4rem",
+          borderRadius: "1rem",
         }}
       >
         <Typography variant="h4" sx={{ textAlign: "center" }}>
@@ -103,8 +105,9 @@ const LoginPage = () => {
         </Typography>
         <TextField
           id="outlined-basic"
-          label="Username"
+          label="Username/Email"
           variant="outlined"
+          placeholder="Enter Username or Email"
           onChange={(e) => {
             setLoginData({ ...loginData, username: e.target.value });
           }}
@@ -114,6 +117,7 @@ const LoginPage = () => {
             Password
           </InputLabel>
           <OutlinedInput
+            placeholder="Enter Password"
             id="outlined-adornment-password"
             type={showPassword ? "text" : "password"}
             onChange={(e) => {
@@ -142,7 +146,7 @@ const LoginPage = () => {
           sx={{ height: "3rem" }}
           onClick={handleSubmit}
         >
-          Login
+          {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
         <Typography variant="body2" sx={{ textAlign: "center" }}>
           Don't have an account?{" "}

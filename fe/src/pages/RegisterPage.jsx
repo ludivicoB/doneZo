@@ -86,6 +86,9 @@ const RegisterPage = () => {
           flexDirection: "column",
           gap: 2,
           width: "20rem",
+          bgcolor: "white",
+          padding: "4rem",
+          borderRadius: "1rem",
         }}
       >
         <Typography variant="h4" sx={{ textAlign: "center" }}>
