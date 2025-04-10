@@ -36,7 +36,7 @@ export const login = (req, res) => {
         return res.status(500).json({ message: "Error verifying password" });
 
       if (!isMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.json({ status: "error", message: "Invalid credentials" });
       }
 
       // Generate JWT token
@@ -46,7 +46,7 @@ export const login = (req, res) => {
         { expiresIn: "1h" }
       );
 
-      res.json({ message: "Login successful", token });
+      res.json({ message: "Login successful", token, status: "success" });
     });
   });
 };
