@@ -11,15 +11,11 @@ const HomePage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${apiurl}`,
-        {},
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${apiurl}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
       if (res.data) {
         console.log(res.data);
