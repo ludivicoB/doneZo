@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux"; // Import useDispatch to dispatch actions
-import { logout } from "../../redux/slices/authSlice"; // Import the logout action
-import { useNavigate } from "react-router-dom"; // Import useNavigate to redirect the user
+import { useSelector, useDispatch } from "react-redux"; // Import useDispatch to dispatch actions
 import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
 import AddTodoModal from "../../components/AddTodoModal";
+import UpdateTodoModal from "../../components/UpdateTodoModal";
 import TodoCards from "../../components/TodoCard";
 import AlertNotification from "../../components/util/AlertNotification";
 const HomePage = () => {
+  const dispatch = useDispatch();
   const middle = {
     display: "flex",
     justifyContent: "center",
@@ -20,10 +20,10 @@ const HomePage = () => {
     severity: "error",
   });
   const apiurl = useSelector((state) => state.todo.apiUrl);
-  const dispatch = useDispatch(); // Hook to dispatch actions
-  const navigate = useNavigate(); // Hook to navigate to other routes
   const [todos, setTodos] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  //FETCH USER TODOS
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
@@ -40,6 +40,7 @@ const HomePage = () => {
     fetchUser();
   }, []);
 
+  //ADD TODO
   const handleAddTodo = async (taskName) => {
     const token = localStorage.getItem("token");
     try {
@@ -65,6 +66,8 @@ const HomePage = () => {
 
     handleCloseModal(); // Close the modal after submission
   };
+
+  //SET TODO AS DONE
   const setTodoDone = async (id) => {
     console.log(id);
     const token = localStorage.getItem("token");
@@ -83,7 +86,7 @@ const HomePage = () => {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
         setSnackbar({
           open: true,
-          message: res.data.message,
+          message: "Task Finished!",
           severity: "success",
         });
       }
@@ -91,37 +94,58 @@ const HomePage = () => {
       console.log(error.message);
     }
   };
+
+  //UPDATE TODO
+  const handleUpdateTodo = async (taskname, id) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await axios.put(
+        `${apiurl}/${id}`,
+        { id: id, task: taskname },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.data.status == "success") {
+        setTodos(res.data.todos);
+        setSnackbar({
+          open: true,
+          message: res.data.message,
+          severity: "success",
+        });
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      handleCloseUpdateModal();
+    }
+  };
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-  const handleLogout = () => {
-    // Dispatch the logout action to clear the Redux state
-    dispatch(logout());
-    // Redirect the user to the login page
-    navigate("/login");
+  const handleOpenUpdateModal = () => {
+    setOpenUpdateModal(true);
+  };
+  const handleCloseUpdateModal = () => {
+    setOpenUpdateModal(false);
   };
 
   return (
     <div>
-      <Button
-        onClick={() => {
-          console.log(todos);
-        }}
-      >
-        todos
-      </Button>
       <Box
         sx={
           (middle, { flexDirection: "column", gap: "1rem", bgcolor: "#242424" })
         }
       >
-        <Button
-          variant="contained"
-          onClick={handleLogout}
-          sx={{ height: "3rem" }}
+        <Typography
+          variant="h4"
+          sx={{ color: "white", textAlign: "center", padding: "2rem" }}
         >
-          Logout
-        </Button>
+          PENDING TASKS
+        </Typography>
         <Box
           sx={{
             gap: "1rem",
@@ -135,7 +159,12 @@ const HomePage = () => {
         >
           {todos.length > 0 ? (
             todos.map((todo) => (
-              <TodoCards todo={todo} key={todo.id} setTodoDone={setTodoDone} />
+              <TodoCards
+                todo={todo}
+                key={todo.id}
+                setTodoDone={setTodoDone}
+                openModal={handleOpenUpdateModal}
+              />
             ))
           ) : (
             <Typography
@@ -158,6 +187,11 @@ const HomePage = () => {
         open={openModal}
         onClose={handleCloseModal}
         onSubmit={handleAddTodo}
+      />
+      <UpdateTodoModal
+        open={openUpdateModal}
+        onClose={handleCloseUpdateModal}
+        onSubmit={handleUpdateTodo}
       />
       <AlertNotification snackbar={snackbar} setSnackbar={setSnackbar} />
     </div>

@@ -6,25 +6,32 @@ import HomePage from "./pages/AuthPages/HomePage.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import NavBar from "./components/NavBar.jsx";
+import TaskHistoryPage from "./pages/AuthPages/TaskHistoryPage.jsx";
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route
-        path="/login"
-        element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage />}
-      />
-      <Route
-        path="/register"
-        element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />}
-      />
+    <>
+      {isLoggedIn && <NavBar />}
 
-      {/* Protect home page with PrivateRoute */}
-      <Route element={<PrivateRoute />}>
-        <Route path="/home" element={<HomePage />} />
-      </Route>
-    </Routes>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/login"
+          element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage />}
+        />
+        <Route
+          path="/register"
+          element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />}
+        />
+
+        {/* Protect home page with PrivateRoute */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/finished-tasks" element={<TaskHistoryPage />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
