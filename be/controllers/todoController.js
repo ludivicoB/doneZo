@@ -55,7 +55,18 @@ export const updateTodo = (req, res) => {
     [task, req.params.id, req.user.id],
     (err, result) => {
       if (err) return res.status(500).json({ message: "Error updating task" });
-      res.json({ message: "Task updated successfully" });
+      db.query(
+        "SELECT * FROM todos where user_id=? AND completed=0",
+        [req.params.id],
+        (err, results) => {
+          if (err) return res.stats(500).json({ message: err.message });
+          res.json({
+            message: "Task updated successfully",
+            todos: results,
+            status: "success",
+          });
+        }
+      );
     }
   );
 };

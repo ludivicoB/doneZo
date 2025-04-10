@@ -15,10 +15,10 @@ const router = express.Router();
 
 router.get("/pending", verifyToken, getPendingTodos);
 router.get("/done", verifyToken, getDoneTodos);
-router.post("/", verifyToken, addTodo);
 router.get("/:id", verifyToken, getTodo);
 router.put("/:id", verifyToken, updateTodo);
 router.delete("/:id", verifyToken, deleteTodo);
 router.put("/done/:id", verifyToken, setTodoDone);
 router.get("/", verifyToken, getTodos);
+router.post("/", verifyToken, addTodo);
 export default router;
