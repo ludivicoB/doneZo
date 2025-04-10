@@ -13,12 +13,12 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", verifyToken, getTodos);
+router.get("/pending", verifyToken, getPendingTodos);
+router.get("/done", verifyToken, getDoneTodos);
 router.post("/", verifyToken, addTodo);
 router.get("/:id", verifyToken, getTodo);
 router.put("/:id", verifyToken, updateTodo);
 router.delete("/:id", verifyToken, deleteTodo);
 router.put("/done/:id", verifyToken, setTodoDone);
-router.get("/done/:id", verifyToken, getDoneTodos);
-router.get("/pending/:id", verifyToken, getPendingTodos);
+router.get("/", verifyToken, getTodos);
 export default router;
