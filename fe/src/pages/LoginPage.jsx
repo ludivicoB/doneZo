@@ -94,7 +94,7 @@ const LoginPage = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          width: "20rem",
+          width: "30rem",
           bgcolor: "white",
           padding: "4rem",
           borderRadius: "1rem",

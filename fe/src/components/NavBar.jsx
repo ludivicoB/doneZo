@@ -1,23 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppBar, Tabs, Tab, Box, Button } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
+
 const NavBar = () => {
-  const [value, setValue] = useState(0); // Track the currently selected tab
-  const navigate = useNavigate(); // For navigating after logout
-  const dispatch = useDispatch(); // Assuming you are using Redux
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation(); // Get the current URL
+  // Set the default tab based on the current location (path)
+  const getTabValue = (path) => {
+    switch (path) {
+      case "/home":
+        return 1; // Pending Tasks
+      case "/finished-tasks":
+        return 2; // Finished Tasks
+      case "/profile":
+        return 0; // Profile
+      default:
+        return 1; // Default to Pending Tasks if the path doesn't match
+    }
+  };
+
+  const [value, setValue] = useState(getTabValue(location.pathname)); // Set the default value based on current path
 
   const handleChange = (event, newValue) => {
-    setValue(newValue); // Update selected tab index
+    setValue(newValue); // Update the selected tab index
   };
 
   const handleLogout = () => {
-    // Dispatch the logout action to clear the Redux state
-    dispatch(logout());
-    // Redirect the user to the login page
-    navigate("/login");
+    dispatch(logout()); // Dispatch the logout action to clear Redux state
+    navigate("/login"); // Redirect to login page
   };
+
+  useEffect(() => {
+    // Update the value whenever the location changes (e.g., when navigating between tabs)
+    setValue(getTabValue(location.pathname));
+  }, [location.pathname]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -35,7 +54,7 @@ const NavBar = () => {
             aria-label="navbar tabs"
             textColor="inherit"
             indicatorColor="secondary"
-            sx={{ flexGrow: 1 }} // Ensure the tabs take up the remaining space
+            sx={{ flexGrow: 1 }}
           >
             <Tab
               label="Profile"
@@ -58,7 +77,7 @@ const NavBar = () => {
           </Tabs>
           <Button
             variant="outlined"
-            sx={{ color: "white", marginRight: 2 }} // Add some space to the right
+            sx={{ color: "white", marginRight: 2 }}
             onClick={handleLogout}
           >
             Logout

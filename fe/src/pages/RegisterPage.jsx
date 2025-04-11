@@ -40,7 +40,6 @@ const RegisterPage = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Register Data:", registerData);
     if (
       registerData.username == "" ||
       registerData.password == "" ||
@@ -60,8 +59,18 @@ const RegisterPage = () => {
         email: registerData.email,
         password: registerData.password,
       });
-      if (res.data) {
-        console.log(res.data);
+      if (res.data.status == "success") {
+        setSnackbar({
+          open: true,
+          message: res.data.message,
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: res.data.message,
+          severity: "error",
+        });
       }
     } catch (error) {
       console.log("error", error.message);
@@ -85,7 +94,7 @@ const RegisterPage = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          width: "20rem",
+          width: "30rem",
           bgcolor: "white",
           padding: "4rem",
           borderRadius: "1rem",

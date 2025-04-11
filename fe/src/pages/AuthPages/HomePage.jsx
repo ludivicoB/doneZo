@@ -137,7 +137,13 @@ const HomePage = () => {
     <div>
       <Box
         sx={
-          (middle, { flexDirection: "column", gap: "1rem", bgcolor: "#242424" })
+          (middle,
+          {
+            flexDirection: "column",
+            gap: "1rem",
+            bgcolor: "#242424",
+            pb: "3rem",
+          })
         }
       >
         <Typography

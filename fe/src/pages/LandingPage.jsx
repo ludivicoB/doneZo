@@ -13,13 +13,19 @@ const LandingPage = () => {
         alignItems: "center",
         textAlign: "center",
         padding: 4,
-        background: "#f5f5f5",
+        color: "white",
       }}
     >
       <Typography variant="h2" fontWeight="bold" gutterBottom>
         Welcome to Website✅
       </Typography>
-      <Typography variant="h6" color="text.secondary" maxWidth="600px" mb={4}>
+      <Typography
+        variant="h6"
+        color="text.secondary"
+        maxWidth="600px"
+        mb={4}
+        sx={{ color: "white" }}
+      >
         Description Here
       </Typography>
       <Box sx={{ display: "flex", gap: 2 }}>

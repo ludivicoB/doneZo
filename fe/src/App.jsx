@@ -8,6 +8,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NavBar from "./components/NavBar.jsx";
 import TaskHistoryPage from "./pages/AuthPages/TaskHistoryPage.jsx";
+import ProfilePage from "./pages/AuthPages/ProfilePage.jsx";
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/finished-tasks" element={<TaskHistoryPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </>
