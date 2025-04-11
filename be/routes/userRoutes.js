@@ -6,6 +6,6 @@ import {
 } from "../controllers/userController.js";
 const router = express.Router();
 
-router.get("/:id", verifyToken, getUserProfile);
+router.get("/", verifyToken, getUserProfile);
 router.put("/:id", verifyToken, changePassword);
 export default router;

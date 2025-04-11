@@ -4,14 +4,36 @@ import jwt from "jsonwebtoken";
 
 export const register = (req, res) => {
   const { username, email, password } = req.body;
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
-    if (err) return res.status(500).json({ message: "Error hashing password" });
 
-    const sql =
-      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-    db.query(sql, [username, email, hashedPassword], (err, result) => {
-      if (err) return res.status(400).json({ message: "User already exists" });
-      res.status(201).json({ message: "User registered successfully" });
+  // Check if username or email already exists
+  const checkUserQuery = "SELECT * FROM users WHERE username = ? OR email = ?";
+  db.query(checkUserQuery, [username, email], (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    // If user with the same username or email exists, return an error
+    if (result.length > 0) {
+      return res.json({
+        status: "error",
+        message: "Username or email already exists",
+      });
+    }
+
+    // Proceed with hashing the password if no user exists with the same username/email
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+      if (err)
+        return res.status(500).json({ message: "Error hashing password" });
+
+      const sql =
+        "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+      db.query(sql, [username, email, hashedPassword], (err, result) => {
+        if (err)
+          return res.status(400).json({ message: "Error registering user" });
+        res
+          .status(201)
+          .json({ message: "User registered successfully", status: "success" });
+      });
     });
   });
 };

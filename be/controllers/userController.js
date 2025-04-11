@@ -2,7 +2,7 @@ import db from "../db.js";
 import bcrypt from "bcryptjs";
 
 export const getUserProfile = (req, res) => {
-  const userid = req.params.id;
+  const userid = req.user.id;
   db.query("select * from users where id=?", [userid], (err, result) => {
     if (err) {
       return res.status(500).json({ message: "Error getting user profile" });
