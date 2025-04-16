@@ -7,5 +7,5 @@ import {
 const router = express.Router();
 
 router.get("/", verifyToken, getUserProfile);
-router.put("/:id", verifyToken, changePassword);
+router.put("/", verifyToken, changePassword);
 export default router;

@@ -12,7 +12,7 @@ export const getUserProfile = (req, res) => {
 };
 
 export const changePassword = (req, res) => {
-  const userid = req.params.id;
+  const userid = req.user.id;
   const { oldpassword, newpassword } = req.body;
 
   db.query(
@@ -31,10 +31,15 @@ export const changePassword = (req, res) => {
 
       // ✅ Use bcrypt to compare hashed and plain text password
       bcrypt.compare(oldpassword, userPassword, (err, isMatch) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err)
+          return res.json({
+            error: err.message,
+            status: "error",
+            message: "Error comparing passwords",
+          });
 
         if (!isMatch) {
-          return res.status(401).json({
+          return res.json({
             status: "error",
             message: "Old password is incorrect",
           });
@@ -42,16 +47,19 @@ export const changePassword = (req, res) => {
 
         // ✅ Hash the new password before saving
         bcrypt.hash(newpassword, 10, (err, hashednewpassword) => {
-          if (err) return res.status(500).json({ error: err.message });
+          if (err)
+            return res.json({
+              status: "error",
+              message: "Error hashing password",
+              error: err.message,
+            });
 
           db.query(
             "UPDATE users SET password = ? WHERE id = ?",
             [hashednewpassword, userid],
             (err, result) => {
               if (err) {
-                return res
-                  .status(500)
-                  .json({ status: "error", message: err.message });
+                return res.json({ status: "error", message: err.message });
               }
 
               return res.json({
